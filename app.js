@@ -1,5 +1,5 @@
 var config = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     width: 800,
     height: 600,
     backgroundColor: '#fff0f0',
@@ -23,6 +23,8 @@ var im1;
 var im2;
 
 var gl;
+
+var swatchData;
 
 function preload() {
     this.load.image('mushroom', 'mushroom0.png');
@@ -54,60 +56,90 @@ function preload() {
 }
 
 function create() {
-    const sprite1 = this.add.sprite(-32, 0, 'mushroom');
-    const sprite2 = this.add.sprite(-32, 0, 'mushroom1');
-    const sprite3 = this.add.sprite(-32, 0, 'mushroom2');
-    const sprite4 = this.add.sprite(-32, 0, 'mushroom3');
+    const src = this.textures.get('mushroom').getSourceImage();
+    const src1 = this.textures.get('mushroom1').getSourceImage();
+    const src2 = this.textures.get('mushroom2').getSourceImage();
+    const src3 = this.textures.get('mushroom3').getSourceImage();
 
-    let sprites = [];
+    swatchData = this.textures.createCanvas('swatch', 64, 280);
+    swatchData.draw(0, 0, src);
+    swatchData.draw(0, 70, src1);
+    swatchData.draw(0, 140, src2);
+    swatchData.draw(0, 210, src3);
 
-    sprites.push(sprite1);
-    sprites.push(sprite2);
-    sprites.push(sprite3);
-    sprites.push(sprite4);
+    //this.add.image(100, 300, 'swatch');
 
-    var rt = this.add.renderTexture(64, 150, 64, 70 * 4);
+    const container = this.add.container(400, 300);
 
-    rt.beginDraw();
+    ts = this.add.tileSprite(0, 0, 64, 64, 'swatch').setScale(1.5);
+    ts1 = this.add.tileSprite(100, 0, 64, 64, 'swatch').setScale(1.5);
 
-    for (var i = 0; i < 4; i++) {
-        rt.batchDraw(sprites[i], 32, 32 + i * 70);
-    }
+    container.add(ts);
+    container.add(ts1);
 
-    rt.endDraw();
-
-    rt.snapshot((data) => {
-        var container = this.add.container(400, 300);
-        this.game.textures.addImage('asdf', data);
-        ts = this.add.tileSprite(0, 0, 64, 64, 'asdf').setScale(1.5);
-        ts1 = this.add.tileSprite(100, 0, 64, 64, 'asdf').setScale(1.5);
-
-        container.add(ts);
-        container.add(ts1);
-
-        this.add.tween({
-            targets: ts,
-            tilePositionY: {
-                from: ts.tilePositionY,
-                to: -70 * 8,
-            },
-            duration: 2000,
-            ease: 'Cubic.Out',
-            onComplete: () => {
-                this.add.tween({
-                    targets: ts1,
-                    tilePositionY: {
-                        from: ts1.tilePositionY,
-                        to: -70 * 8,
-                    },
-                    duration: 2000,
-                    ease: 'Cubic.Out',
-                });
-            },
-        });
+    this.add.tween({
+        targets: ts,
+        tilePositionY: {
+            from: ts.tilePositionY,
+            to: -70 * 8,
+        },
+        duration: 2000,
+        ease: 'Cubic.Out',
+        onComplete: () => {
+            this.add.tween({
+                targets: ts1,
+                tilePositionY: {
+                    from: ts1.tilePositionY,
+                    to: -70 * 8,
+                },
+                duration: 2000,
+                ease: 'Cubic.Out',
+            });
+        },
     });
 
-    console.log('rt is ', rt);
+    // var rt = this.add.renderTexture(64, 150, 64, 70 * 4);
+
+    // rt.beginDraw();
+
+    // for (var i = 0; i < 4; i++) {
+    //     rt.batchDraw(sprites[i], 32, 32 + i * 70);
+    // }
+
+    // rt.endDraw();
+
+    // rt.snapshot((data) => {
+    //     var container = this.add.container(400, 300);
+    //     this.game.textures.addImage('asdf', data);
+    //     ts = this.add.tileSprite(0, 0, 64, 64, 'asdf').setScale(1.5);
+    //     ts1 = this.add.tileSprite(100, 0, 64, 64, 'asdf').setScale(1.5);
+
+    //     container.add(ts);
+    //     container.add(ts1);
+
+    //     this.add.tween({
+    //         targets: ts,
+    //         tilePositionY: {
+    //             from: ts.tilePositionY,
+    //             to: -70 * 8,
+    //         },
+    //         duration: 2000,
+    //         ease: 'Cubic.Out',
+    //         onComplete: () => {
+    //             this.add.tween({
+    //                 targets: ts1,
+    //                 tilePositionY: {
+    //                     from: ts1.tilePositionY,
+    //                     to: -70 * 8,
+    //                 },
+    //                 duration: 2000,
+    //                 ease: 'Cubic.Out',
+    //             });
+    //         },
+    //     });
+    // });
+
+    // console.log('rt is ', rt);
 }
 
 function update(time, delta) {}
